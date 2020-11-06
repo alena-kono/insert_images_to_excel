@@ -2,7 +2,7 @@ import pathlib
 import tkinter
 import tkinter.filedialog
 
-import gui_for_setup
+import gui
 
 tkinter.Tk().withdraw()
 
@@ -25,11 +25,11 @@ CELL_HEIGHT = 85
 
 TARGET_COLUMN = 'A'
 
-LOOKUP_COLUMN = gui_for_setup.create_simple_dialog(
+LOOKUP_COLUMN = gui.create_simple_dialog(
     title='Setup',
     prompt='Enter column letter for lookup: ').upper()
 
-START_ROW = int(gui_for_setup.create_simple_dialog(
+START_ROW = int(gui.create_simple_dialog(
     title='Setup',
     prompt='Enter start row: '))
 
