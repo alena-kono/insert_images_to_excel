@@ -28,10 +28,10 @@ cd insert_images_to_excel
 python3 run.py
 ```
 
-# Utilization
+## Utilization
 
 You will need .xls or .xlsx file that contains:
 * at least one target column (column to where images will be inserted);
 * column with names exactly (excluding extension) matching your images
 
-![picture alt](/Users/alena/Dev/heart_repos/orbico/insert_images_to_excel/test_data/target_file.png "target file")
+![alternativetext](insert_images_to_excel/test_data/target_file.png "target file")
