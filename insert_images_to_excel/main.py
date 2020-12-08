@@ -1,7 +1,10 @@
 import pathlib
+import tkinter
+import tkinter.filedialog
 
 import openpyxl
 
+import gui
 import settings
 
 
@@ -48,12 +51,13 @@ def insert_image_to_matched_cell_value(
     worksheet: openpyxl.worksheet,
     images_in_dir: dict,
     target_column: str,
-    lookup_column: str
+    lookup_column: str,
+    start_row: int
         ) -> None or dict:
 
     cells_with_images_not_found = {}
 
-    for row in range(settings.START_ROW, worksheet.max_row + 1):
+    for row in range(start_row, worksheet.max_row + 1):
 
         target_cell_address = target_column + str(row)
         lookup_column_index = openpyxl.utils.column_index_from_string(
@@ -80,26 +84,47 @@ def insert_image_to_matched_cell_value(
 
 def main():
 
-    workbook = openpyxl.load_workbook(settings.PATH_TO_TARGET_FILE)
+    tkinter.Tk().withdraw()
+
+    PATH_TO_IMAGES_DIRECTORY = pathlib.Path(
+        tkinter.filedialog.askdirectory(
+            title='Choose directory with images',
+            initialdir=pathlib.os.getcwd()))
+
+    PATH_TO_TARGET_FILE = pathlib.Path(
+        tkinter.filedialog.askopenfilename(
+            title='Choose target file',
+            initialdir=pathlib.os.getcwd()))
+
+    PATH_TO_UPDATED_FILE = pathlib.Path(
+        PATH_TO_TARGET_FILE.with_name(
+            PATH_TO_TARGET_FILE.stem + '_UPD.xlsx'))
+
+    LOOKUP_COLUMN = gui.create_simple_dialog(
+        title='Setup',
+        prompt='Enter column letter for lookup: ').upper()
+    START_ROW = int(gui.create_simple_dialog(
+        title='Setup',
+        prompt='Enter start row: '))
+    TARGET_COLUMN = 'A'
+
+    workbook = openpyxl.load_workbook(PATH_TO_TARGET_FILE)
     worksheet = workbook.active
 
     set_cell_range_dimensions(
         worksheet,
-        cell_rows=range(settings.START_ROW, worksheet.max_row + 1),
-        cell_column=settings.TARGET_COLUMN,
+        cell_rows=range(START_ROW, worksheet.max_row + 1),
+        cell_column=TARGET_COLUMN,
         width=settings.CELL_WIDTH,
         height=settings.CELL_HEIGHT)
 
     insert_image_to_matched_cell_value(
         worksheet,
         images_in_dir=create_filenames_and_filepaths(
-            settings.PATH_TO_IMAGES_DIRECTORY),
-        target_column=settings.TARGET_COLUMN,
-        lookup_column=settings.LOOKUP_COLUMN)
-
-    workbook.save(settings.PATH_TO_UPDATED_FILE)
+            PATH_TO_IMAGES_DIRECTORY),
+        target_column=TARGET_COLUMN,
+        lookup_column=LOOKUP_COLUMN,
+        start_row=START_ROW
+        )
+    workbook.save(PATH_TO_UPDATED_FILE)
     workbook.close()
-
-
-if __name__ == "__main__":
-    main()
